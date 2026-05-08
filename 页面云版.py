@@ -25,26 +25,71 @@ import shap
 # ==========================================
 st.set_page_config(page_title="Pneumoconiosis Risk Prediction System", layout="wide")
 
-st.markdown("""
+st.markdown(
+    """
 <style>
-    * {
+    html, body, [data-testid="stAppViewContainer"], [data-testid="stMainBlockContainer"] {
+        font-family: Arial, Helvetica, 'DejaVu Sans', sans-serif;
+    }
+
+    h1, h2, h3, h4, h5, h6,
+    p, label, span,
+    div[data-testid="stMarkdownContainer"],
+    div[data-testid="stNumberInput"] label p,
+    div[data-testid="stSelectbox"] label p,
+    [data-testid="stMetricValue"],
+    [data-testid="stMetricLabel"],
+    input[type="number"],
+    input,
+    textarea,
+    select {
         font-family: Arial, Helvetica, 'DejaVu Sans', sans-serif !important;
     }
+
     div[data-testid="stNumberInput"] label p,
     div[data-testid="stSelectbox"] label p {
         font-size: 20px !important;
-        font-weight: bold !important;
+        font-weight: 700 !important;
     }
-    [data-testid="stMetricValue"] { font-family: Arial, Helvetica, 'DejaVu Sans', sans-serif !important; }
+
     input[type="number"] {
-        font-family: Arial, Helvetica, 'DejaVu Sans', sans-serif !important;
-        font-size: 30px !important;
-        font-weight: bold !important;
+        font-size: 24px !important;
+        font-weight: 700 !important;
+    }
+
+    /* 保留 Streamlit 图标字体，避免菜单和展开箭头变成文字 */
+    .material-icons,
+    .material-icons-round,
+    .material-icons-outlined,
+    .material-symbols-rounded,
+    .material-symbols-outlined {
+        font-family: 'Material Icons', 'Material Symbols Rounded', 'Material Symbols Outlined' !important;
+    }
+
+    /* 公共页面可隐藏右上角工具栏，避免移动端/窄屏设置菜单重叠 */
+    [data-testid="stToolbar"] {
+        display: none;
     }
 </style>
-""", unsafe_allow_html=True)
+""",
+    unsafe_allow_html=True,
+)
 
-st.markdown("""<h1 style='font-family: Arial, Helvetica, 'DejaVu Sans', sans-serif; font-size: 54px; font-weight: 700; white-space: nowrap; margin: 0 0 0.2rem 0; line-height: 1.05;'>Miner Pneumoconiosis Risk Prediction System</h1>""", unsafe_allow_html=True)
+st.markdown(
+    """
+<h1 style="
+    font-family: Arial, Helvetica, 'DejaVu Sans', sans-serif;
+    font-size: 52px;
+    font-weight: 700;
+    white-space: nowrap;
+    margin: 0 0 0.2rem 0;
+    line-height: 1.05;
+">
+    Miner Pneumoconiosis Risk Prediction System
+</h1>
+""",
+    unsafe_allow_html=True,
+)
 st.markdown("Enter feature data to predict the risk of pneumoconiosis and perform interpretability analysis.")
 st.divider()
 
@@ -53,9 +98,9 @@ COLOR_RED = "#B82E2E"
 
 
 # ==========================================
-# 工具函数：渲染带 CSS 颜色劫持的 JS 力图（保留备用）
+# 工具函数：渲染带 CSS 颜色劫持的 JS 力图
 # ==========================================
-def st_shap(plot, height=300, min_width=1800):
+def st_shap(plot, height=320, min_width=1800):
     shap_html = f"""
     <head>
         {shap.getjs()}
@@ -198,11 +243,18 @@ input_df = pd.DataFrame([input_data])[features]
 
 st.markdown("<br>", unsafe_allow_html=True)
 
-display_names = {
+display_names_plot = {
     'years': 'Years', 'time/week': 'Time/Week', 'blasting': 'Blasting',
     'transport': 'Transport', 'extract': 'Extract', 'support': 'Support',
     'repair': 'Repair', 'other': 'Other', 'max': 'Max',
     'Ctwa': r'C$_{twa}$', 'SiO2': 'SiO₂', 'protect': 'Protect'
+}
+
+display_names_force = {
+    'years': 'Years', 'time/week': 'Time/Week', 'blasting': 'Blasting',
+    'transport': 'Transport', 'extract': 'Extract', 'support': 'Support',
+    'repair': 'Repair', 'other': 'Other', 'max': 'Max',
+    'Ctwa': 'Ctwa', 'SiO2': 'SiO₂', 'protect': 'Protect'
 }
 
 # ==========================================
@@ -244,13 +296,14 @@ if st.button("Run Prediction", type="primary", use_container_width=True):
             adjusted_base_value = float(expected_val) + float(unselected_shap_sum)
             adjusted_values = shap_values_raw[0][keep_indices]
             adjusted_data = input_df.iloc[0].values[keep_indices]
-            adjusted_features_display = [display_names[features[i]] for i in keep_indices]
+            adjusted_features_display_plot = [display_names_plot[features[i]] for i in keep_indices]
+            adjusted_features_display_force = [display_names_force[features[i]] for i in keep_indices]
 
             shap_exp = shap.Explanation(
                 values=adjusted_values,
                 base_values=adjusted_base_value,
                 data=adjusted_data,
-                feature_names=adjusted_features_display
+                feature_names=adjusted_features_display_plot
             )
 
             try:
@@ -262,7 +315,7 @@ if st.button("Run Prediction", type="primary", use_container_width=True):
 
             # --- 图 1：瀑布图 ---
             st.subheader("Risk Accumulation Attribution Analysis")
-            fig_waterfall, ax_wf = plt.subplots(figsize=(10, 6))
+            fig_waterfall, ax_wf = plt.subplots(figsize=(10, 6), dpi=220)
             shap.plots.waterfall(shap_exp, show=False, max_display=10)
 
             for patch in ax_wf.patches:
@@ -295,7 +348,7 @@ if st.button("Run Prediction", type="primary", use_container_width=True):
                     line.set_color('#cccccc')
 
             plt.tight_layout()
-            st.pyplot(fig_waterfall)
+            st.pyplot(fig_waterfall, use_container_width=True)
             plt.close(fig_waterfall)
 
             # --- 图 2：云端稳定版 JS 力图 ---
@@ -307,18 +360,18 @@ if st.button("Run Prediction", type="primary", use_container_width=True):
                     base_value=float(adjusted_base_value),
                     shap_values=adjusted_values,
                     features=rounded_features,
-                    feature_names=adjusted_features_display,
+                    feature_names=adjusted_features_display_force,
                     plot_cmap=[COLOR_BLUE, COLOR_RED],
                     contribution_threshold=0.0
                 )
-                min_width = max(1800, 260 * len(adjusted_features_display))
+                min_width = max(1800, 260 * len(adjusted_features_display_force))
                 st_shap(force_plot_js, height=320, min_width=min_width)
             except Exception as e:
                 st.warning(f"Issue generating Force Plot: {e}")
 
         st.markdown("---")
         st.subheader("Targeted Dust Prevention & Rectification Suggestions")
-        feature_shap_dict = {feat: val for feat, val in zip(adjusted_features_display, adjusted_values)}
+        feature_shap_dict = {feat: val for feat, val in zip(adjusted_features_display_force, adjusted_values)}
         sorted_features = sorted(feature_shap_dict.items(), key=lambda x: x[1], reverse=True)
         top_risk_features = [item for item in sorted_features if item[1] > 0][:3]
 
@@ -328,7 +381,6 @@ if st.button("Run Prediction", type="primary", use_container_width=True):
             measures_dict = {
                 'Max': "**Reduce Peak Dust Concentration (Max)**: Must install spray dust reduction at main dust generation points; optimize ventilation; wet operation.",
                 'Ctwa': "**Control Time-Weighted Average Concentration (Ctwa)**: Improve ventilation and dust removal efficiency; fully enclose dust reduction in key areas; normalize the opening of water curtains.",
-                r'C$_{twa}$': "**Control Time-Weighted Average Concentration (Ctwa)**: Improve ventilation and dust removal efficiency; fully enclose dust reduction in key areas; normalize the opening of water curtains.",
                 'SiO₂': "**Handle High Free Silica (SiO₂)**: Adopt long-extraction and short-pressure combined dust removal fan scheme; wear the highest protection level masks for such positions.",
                 'Years': "**High Service Years Health Management (Years)**: High cumulative risk. Increase frequency of physical examinations; prioritize off-dust job rotation.",
                 'Time/Week': "**Optimize Weekly Work Hours (Time/Week)**: Strictly control operation hours; implement off-dust rest system.",
