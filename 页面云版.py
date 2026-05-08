@@ -30,8 +30,21 @@ st.markdown(
 <style>
     html, body, [data-testid="stAppViewContainer"], [data-testid="stMainBlockContainer"] {
         font-family: Arial, Helvetica, 'DejaVu Sans', sans-serif;
-    }
-
+    } 
+    [data-testid="stExpander"] .material-icons,
+    [data-testid="stExpander"] .material-icons-round,
+    [data-testid="stExpander"] .material-icons-outlined,
+    [data-testid="stExpander"] .material-symbols-rounded,
+    [data-testid="stExpander"] .material-symbols-outlined {
+    font-family: "Material Symbols Rounded", "Material Symbols Outlined", "Material Icons" !important;
+    font-weight: normal !important;
+    font-style: normal !important;
+    font-size: 1.1rem !important;
+    line-height: 1 !important;
+    letter-spacing: normal !important;
+    text-transform: none !important;
+    white-space: nowrap !important;
+}
     h1, h2, h3, h4, h5, h6,
     p, label, span,
     div[data-testid="stMarkdownContainer"],
