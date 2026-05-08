@@ -25,68 +25,68 @@ import shap
 # ==========================================
 st.set_page_config(page_title="Pneumoconiosis Risk Prediction System", layout="wide")
 
-st.markdown(
-    """
+st.markdown("""
 <style>
-    html, body, [data-testid="stAppViewContainer"], [data-testid="stMainBlockContainer"] {
+    /* 只给正文和表单控件设字体，不再用 * 全局覆盖 */
+    html, body, [data-testid="stAppViewContainer"] {
         font-family: Arial, Helvetica, 'DejaVu Sans', sans-serif;
-    } 
-    [data-testid="stExpander"] .material-icons,
-    [data-testid="stExpander"] .material-icons-round,
-    [data-testid="stExpander"] .material-icons-outlined,
-    [data-testid="stExpander"] .material-symbols-rounded,
-    [data-testid="stExpander"] .material-symbols-outlined {
-    font-family: "Material Symbols Rounded", "Material Symbols Outlined", "Material Icons" !important;
-    font-weight: normal !important;
-    font-style: normal !important;
-    font-size: 1.1rem !important;
-    line-height: 1 !important;
-    letter-spacing: normal !important;
-    text-transform: none !important;
-    white-space: nowrap !important;
-}
+    }
+
     h1, h2, h3, h4, h5, h6,
-    p, label, span,
+    p, label,
     div[data-testid="stMarkdownContainer"],
     div[data-testid="stNumberInput"] label p,
     div[data-testid="stSelectbox"] label p,
     [data-testid="stMetricValue"],
-    [data-testid="stMetricLabel"],
     input[type="number"],
-    input,
-    textarea,
-    select {
+    input[type="text"],
+    textarea {
         font-family: Arial, Helvetica, 'DejaVu Sans', sans-serif !important;
     }
 
     div[data-testid="stNumberInput"] label p,
     div[data-testid="stSelectbox"] label p {
         font-size: 20px !important;
-        font-weight: 700 !important;
+        font-weight: bold !important;
+    }
+
+    [data-testid="stMetricValue"] {
+        font-family: Arial, Helvetica, 'DejaVu Sans', sans-serif !important;
     }
 
     input[type="number"] {
+        font-family: Arial, Helvetica, 'DejaVu Sans', sans-serif !important;
         font-size: 24px !important;
-        font-weight: 700 !important;
+        font-weight: bold !important;
     }
 
-    /* 保留 Streamlit 图标字体，避免菜单和展开箭头变成文字 */
+    /* 恢复 Streamlit / Material 图标字体，防止 arrow_downward 变成文字 */
     .material-icons,
     .material-icons-round,
     .material-icons-outlined,
     .material-symbols-rounded,
-    .material-symbols-outlined {
-        font-family: 'Material Icons', 'Material Symbols Rounded', 'Material Symbols Outlined' !important;
+    .material-symbols-outlined,
+    [data-testid="stExpander"] .material-icons,
+    [data-testid="stExpander"] .material-icons-round,
+    [data-testid="stExpander"] .material-icons-outlined,
+    [data-testid="stExpander"] .material-symbols-rounded,
+    [data-testid="stExpander"] .material-symbols-outlined {
+        font-family: "Material Symbols Rounded", "Material Symbols Outlined", "Material Icons" !important;
+        font-weight: normal !important;
+        font-style: normal !important;
+        font-size: 1.1rem !important;
+        line-height: 1 !important;
+        letter-spacing: normal !important;
+        text-transform: none !important;
+        white-space: nowrap !important;
     }
 
-    /* 公共页面可隐藏右上角工具栏，避免移动端/窄屏设置菜单重叠 */
+    /* 可选：隐藏右上角工具栏，公共页面更干净，也避免菜单乱掉 */
     [data-testid="stToolbar"] {
         display: none;
     }
 </style>
-""",
-    unsafe_allow_html=True,
-)
+""", unsafe_allow_html=True)
 
 st.markdown(
     """
