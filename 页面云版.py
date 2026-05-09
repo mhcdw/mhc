@@ -81,10 +81,6 @@ st.markdown("""
         white-space: nowrap !important;
     }
 
-    /* 可选：隐藏右上角工具栏，公共页面更干净，也避免菜单乱掉 */
-    [data-testid="stToolbar"] {
-        display: none;
-    }
 </style>
 """, unsafe_allow_html=True)
 
@@ -374,7 +370,7 @@ if st.button("Run Prediction", type="primary", use_container_width=True):
                     shap_values=adjusted_values,
                     features=rounded_features,
                     feature_names=adjusted_features_display_force,
-                    plot_cmap=[COLOR_BLUE, COLOR_RED],
+                    plot_cmap=[COLOR_RED, COLOR_BLUE],
                     contribution_threshold=0.0
                 )
                 min_width = max(1800, 260 * len(adjusted_features_display_force))
